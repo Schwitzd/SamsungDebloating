@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "samsungdebloating"
+dynamic = ["version"]
+description = 'Automate the detection and removal of bloatware apps from Samsung devices using ADB.'
+readme = "README.md"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Schwitzd", email = "me@schwitzd.me" },
+]
+dependencies = [
+    "adbutils==2.7.2",
+    "beaupy==3.8.2"
+]
+
+[project.urls]
+Documentation = "https://github.com/Schwitzd/samsungdebloating#readme"
+Issues = "https://github.com/Schwitzd/samsungdebloating/issues"
+Source = "https://github.com/Schwitzd/samsungdebloating"
+
+[project.scripts]
+SamsungDebloating = "samsungdebloating:main"
+
+[tool.hatch.version]
+path = "src/samsungdebloating/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/samsungdebloating tests}"
