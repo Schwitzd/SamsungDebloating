@@ -4,11 +4,19 @@ SamsungDebloating is a Python tool designed to help you remove unwanted bloatwar
 
 ## Installation
 
-Since this project is not yet published on PyPI, you can install it directly from the GitHub repository:
+1. Clone this repository:
 
-```bash
-pip install git+https://github.com/Schwitzd/SamsungDebloating.git
-```
+    ```bash
+    git clone https://github.com/Schwitzd/SamsungDebloating.git
+    ```
+
+1. Create a Python virtual environment and activate it (optional):
+
+    ```bash
+    cd SamsungDebloating
+    python -m venv .env
+    source .env/bin/activate
+    ```
 
 ## Usage
 
