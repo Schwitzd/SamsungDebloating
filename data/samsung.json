@@ -16,6 +16,10 @@
         "Package": "samsung.android.app.aodservice"
     },
     {
+        "Name": "Application recommendations",
+        "Package": "com.samsung.android.mapsagent"
+    },
+    {
         "Name": "AppCloud",
         "Package": "com.aura.oobe.samsung.gl"
     },
@@ -280,6 +284,10 @@
         "Package": "com.sec.android.app.desktoplauncher"
     },
     {
+        "Name": "Samsung Flow",
+        "Package": "com.samsung.android.galaxycontinuity"
+    },
+    {
         "Name": "Samsung Galaxy Friends",
         "Package": "com.samsung.android.mateagent"
     },
@@ -390,6 +398,10 @@
     {
         "Name": "Tips",
         "Package": "com.samsung.android.app.tips"
+    },
+    {
+        "Name": "Upday for Samsung",
+        "Package": "de.axelspringer.yana.zeropage"
     },
     {
         "Name": "User tracking app",

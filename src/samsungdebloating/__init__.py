@@ -1,7 +1,9 @@
 from rich.console import Console
-from beaupy import select_multiple
+from beaupy import select_multiple, Config
 from .adb_connector import AdbConnector
 from .bloatware_detector import BloatwareDetector
+
+Config.raise_on_interrupt = True
 
 def main():
     # Initialize console and adb connector
