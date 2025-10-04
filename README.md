@@ -14,8 +14,8 @@ SamsungDebloating is a Python tool designed to help you remove unwanted bloatwar
 
     ```bash
     cd SamsungDebloating
-    python -m venv .env
-    source .env/bin/activate
+    python -m venv venv
+    source venv/bin/activate
     ```
 
 ## Usage

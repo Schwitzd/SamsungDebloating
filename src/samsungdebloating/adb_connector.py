@@ -1,5 +1,5 @@
-from typing import Optional, List, Dict
-from beaupy import select_multiple
+from typing import List, Dict, Tuple
+from beaupy import select
 import adbutils
 
 class AdbConnector:
@@ -15,46 +15,58 @@ class AdbConnector:
             for device in self.client.device_list()
         ]
 
-    def _select_device(self) -> Optional[Dict[str, str]]:
-        if not self.deviceslist:
-            try:
-                self.tui.print('No devices connected, waiting for device...')
-                self.client.wait_for(state='device')
-                return self._list_devices()
-            except adbutils.AdbTimeout as timeout:
-                self.tui.print('Timeout connecting to any devices')
-                raise SystemExit() from timeout
-            except KeyboardInterrupt as ki:
-                self.tui.print('Aborted!')
-                raise SystemExit() from ki
+    def _select_device(self) -> Dict[str, str]:
+        while True:
+            self.deviceslist = self._list_devices()
 
-        elif len(self.deviceslist) == 1:
-            return self.deviceslist
-        else:
-            self.tui.print('Multiple devices connected:')
-            devices_model = [f"{device['model']}" for device in self.deviceslist]
-            selected_device = select_multiple(devices_model, maximal_count=1)
+            if not self.deviceslist:
+                try:
+                    self.tui.print('No devices connected. Waiting for device...')
+                    self.client.wait_for(state='device')
+                    continue
+                except adbutils.AdbTimeout as timeout:
+                    self.tui.print('Timeout connecting to any devices')
+                    raise SystemExit() from timeout
+                except KeyboardInterrupt as ki:
+                    self.tui.print('Aborted!')
+                    raise SystemExit() from ki
 
-            return [device for device in self.deviceslist if device['model'] == selected_device[0]]
+            if len(self.deviceslist) == 1:
+                return self.deviceslist[0]
 
-    def connect(self) -> None:
-        device = self._select_device()[0]
-        self.tui.clear()
-        if device:
-            self.device = self.client.device(serial=device['serial'])
-            self.tui.print(f"Successfully connected to device: {device['serial']}")
-        else:
-            self.disconnect()
+            self.tui.print('Multiple devices connected, select one:')
+            options = [
+                f"{index + 1}. {device['model']} ({device['serial']})"
+                for index, device in enumerate(self.deviceslist)
+            ]
+            selected_index = select(options, return_index=True)
+
+            if selected_index is None:
+                self.tui.print('No device selected, aborting.')
+                raise SystemExit()
+
+            return self.deviceslist[selected_index]
+
+    def connect(self) -> Dict[str, str]:
+        device = self._select_device()
+        self.device = self.client.device(serial=device['serial'])
+        return device
 
     def disconnect(self) -> None:
         self.client.server_kill()
 
     def list_apps(self) -> List[str]:
+        if not self.device:
+            self.tui.print('No device connected. Please connect a device first.')
+            raise SystemExit()
         return self.device.list_packages()
 
-    def remove_app(self, app_id) -> None:
-        result = self.device.shell2(['pm', 'uninstall', '--user', '0', app_id])
-        if result.returncode != 0:
-            self.tui.print(f"Failed uninstalling app {app_id}")
-            self.tui.print(result.output)
+    def remove_app(self, app_id: str) -> Tuple[bool, str]:
+        if not self.device:
+            self.tui.print('No device connected. Please connect a device first.')
             raise SystemExit()
+        result = self.device.shell2(['pm', 'uninstall', '--user', '0', app_id])
+        output = result.output.strip()
+        if result.returncode != 0:
+            return False, output or 'Unknown failure'
+        return True, output or 'Success'

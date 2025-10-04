@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import json
 import os
 
@@ -21,7 +21,7 @@ class BloatwareDetector:
         ]
         return bloatware_detected
     
-    def get_app_id(self, app_name: str) -> str:
+    def get_app_id(self, app_name: str) -> Optional[str]:
         for app in self._bloatware_apps:
             if app['Name'] == app_name:
                 return app['Package']
